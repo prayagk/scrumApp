@@ -116,6 +116,7 @@ def mainUI(i):
 	statusBut = StringVar()
 	statusBut.set("ONGOING") #initial value
 	option = OptionMenu(top, statusBut, "ONGOING", "COMPLETED", "SCHEDULED")
+	option.config(width=10)
 	option.grid(row = i+1, column=3,ipadx=50,ipady=5,padx=10)
 	global status
 	status = statusBut.get()
@@ -132,7 +133,7 @@ def controlsUI(i):
 	butSend = Button(top,text="SEND",command=Send,width=50)
 	butSend.grid(row = i+2, column=1,columnspan=4,ipadx=5,ipady=5,pady=5)
 
-	butAdd = Button(top,text = '+',command = addTask, width= 10, height = 2)
+	butAdd = Button(top,text = '+',command = lambda: [butSend.grid_forget(), butAdd.grid_forget(), addTask()], width= 10, height = 2)
 	butAdd.grid(row = i+2, column = 5, ipadx = 10, ipady = 10)
 	return
 
@@ -141,11 +142,13 @@ def removeControls():
 
 def addTask():
 	global taskCount
-	if (taskCount == 3):
-		return
-	taskCount = taskCount+1
-	mainUI(taskCount)
-	controlsUI(taskCount)
+	if (taskCount < 3):
+		taskCount = taskCount+1
+		mainUI(taskCount)
+		controlsUI(taskCount)
+	else:
+		mainUI(taskCount)
+		controlsUI(taskCount)
 
 def ampm(h):
         if (h<10):
