@@ -2,12 +2,12 @@ import os
 import smtplib
 import getpass
 import datetime
-#from email import MIMEMultipart
-#from email.MIMEBase import MIMEBase
-#from email.MIMEText import MIMEText
-#from email.Utils import formatdate
-#from email import encoders
-from tkinter import *
+from email import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.Utils import formatdate
+from email import encoders
+from Tkinter import *
 
 
 def checkFile():
@@ -130,11 +130,11 @@ def mainUI(i):
 	return
 
 def controlsUI(i):
-	butSend = Button(top,text="SEND",command=Send,width=50)
+	butSend = Button(top,text="SEND",command=Send,width=20)
 	butSend.grid(row = i+2, column=1,columnspan=4,ipadx=5,ipady=5,pady=5)
 
-	butAdd = Button(top,text = '+',command = lambda: [butSend.grid_forget(), butAdd.grid_forget(), addTask()], width= 10, height = 2)
-	butAdd.grid(row = i+2, column = 5, ipadx = 10, ipady = 10)
+	butAdd = Button(top,text = '+',command = lambda: [butSend.grid_forget(), butAdd.grid_forget(), addTask()], width= 1, height = 1)
+	butAdd.grid(row = i+2, column = 5, ipadx = 2, ipady = 2)
 	return
 
 def removeControls():
