@@ -2,7 +2,8 @@ import os
 import smtplib
 import getpass
 import datetime
-from email import MIMEMultipart
+import email
+from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.Utils import formatdate
@@ -17,7 +18,7 @@ def checkFile():
 	except OSError:
 		os.mkdir("credentials")
 		os.chdir("credentials")
-	
+
 	try:
 		flogin = open("login.txt","r")
 
@@ -33,6 +34,9 @@ iaddr = ""
 ito = ""
 icc = ""
 ipswd = ""
+
+iname = "asdasd"
+
 def signupUI():
 	global iname
 	global iaddr
@@ -43,8 +47,8 @@ def signupUI():
 	initLabelName = Label(top,text="Enter your name")
 	initLabelName.grid(row=1,column=1,ipadx=5,ipady=5)
 	initName = Entry(top)
+	iname = Entry.get(initName)
 	initName.grid(row=1,column=2,ipadx=5,ipady=5)
-	iname = initName.get()
 	print(iname)
 
 	initLabelAddr = Label(top,text="Enter your mail address")
@@ -52,13 +56,13 @@ def signupUI():
 	initAddr = Entry(top)
 	initAddr.grid(row=2,column=2,ipadx=5,ipady=5)
 	iaddr = initAddr.get()
-	
+
 	initLabelTo = Label(top,text="Enter recipient address")
 	initLabelTo.grid(row=3,column=1,ipadx=5,ipady=5)
 	initTo = Entry(top)
 	initTo.grid(row=3,column=2,ipadx=5,ipady=5)
 	ito = initTo.get()
-	
+
 	initLabelCc = Label(top,text="Cc")
 	initLabelCc.grid(row=4,column=1,ipadx=5,ipady=5)
 	initCc = Entry(top)
@@ -81,6 +85,8 @@ def saveInfo():
 	global ito
 	global icc
 	global ipswd
+	global initName
+	# iname = Entry.get(initName)
 	print("name : "+iname)
 	flogin = open("login.txt","a+")
 	flogin.write(iname)
@@ -181,19 +187,27 @@ def statusfn(status):
 		statusCol = "SCHEDULED"
 		bg = "#ff0000"		
 
+
+send_from=""
+cc = ""
+send_to = ""
+
 def login():
 	flogin = open("login.txt","r")
 	name = flogin.readline()
-	send_from = flogin.readline()
-	send_to = flogin.readline()
+	global cc
+	global send_from
+	global send_to
 	cc = flogin.readline()
-	
+	send_from = flogin.readline()
+	print send_from
+	send_to = flogin.readline()
 
 def Send():
 	msg = MIMEMultipart()
 	msg['From'] = send_from
 	msg['To'] = send_to
-	msg['Cc'] = initCc
+	msg['Cc'] = icc
 	msg['Date'] = formatdate(localtime=True)
 	msg['Subject'] = subject
 	msg.attach(MIMEText(body, 'html'))
@@ -205,9 +219,6 @@ def Send():
 	smtp.close()
 	global sent
 	sent = True
-
-
-
 	
 top=Tk()
 top.title("CYBRO SCRUM")
@@ -243,10 +254,9 @@ else:
 	server="smtp.gmail.com"
 	statusfn(status)
 
-
 	body="""
 	<table cellspacing="0" border="0">
-	<colgroup width="72"></colgroup>
+	<colgroup width="72"></colgroup
 	<colgroup width="235"></colgroup>
 	<colgroup width="186"></colgroup>
 	<colgroup width="106"></colgroup>
