@@ -75,12 +75,12 @@ def signupUI():
 	initPswd.grid(row=5,column=2,ipadx=5,ipady=5)
 	ipswd = initPswd.get()
 	
-	initProceed = Button(top,text="PROCEED",command=saveInfo)
+	initProceed = Button(top,text="PROCEED", command= lambda: saveInfo(iname))	
 	initProceed.grid(row=6,column=2,ipadx=5,ipady=5)
 	return
 	
-def saveInfo():
-	global iname
+def saveInfo(iname):
+	#global iname
 	global iaddr
 	global ito
 	global icc
@@ -193,15 +193,22 @@ cc = ""
 send_to = ""
 
 def login():
+	f = open("login.txt", "r") 
+	print f.read() 
 	flogin = open("login.txt","r")
-	name = flogin.readline()
+	f.close()
+
+	name1 = flogin.readline()
+	print("name: "+name1)
 	global cc
 	global send_from
 	global send_to
 	cc = flogin.readline()
+	
 	send_from = flogin.readline()
 	print send_from
 	send_to = flogin.readline()
+	flogin.close()
 
 def Send():
 	msg = MIMEMultipart()
@@ -212,9 +219,11 @@ def Send():
 	msg['Subject'] = subject
 	msg.attach(MIMEText(body, 'html'))
 	smtp = smtplib.SMTP("smtp.gmail.com",587)
-	smtp.starttls()	
-	password="SRTTOdoo"
-	smtp.login(send_from,password)
+	smtp.starttls()
+	qqq = "prayag@cybrosys.in"
+	password="prayag9633"
+	smtp.login(qqq,password)
+	print("from"+send_from)
 	smtp.sendmail(send_from, send_to, msg.as_string())
 	smtp.close()
 	global sent
@@ -240,12 +249,12 @@ if (initCheck == False):
 	signupUI()
 
 else:
+	login()
 	global projectCount
 	projectCount = 0
 	mainUI(0)
 	controlsUI(0)
 
-	login()
 	name = "PRAYAG_K"
 	#send_from = "minions@cybrosys.in" 
 	#send_to = "minions@cybrosys.in"
