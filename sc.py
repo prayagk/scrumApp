@@ -21,6 +21,7 @@ def checkFile():
 
 	try:
 		flogin = open("login.txt","r")
+		#print(flogin.readline())
 
 	except IOError:
 		flogin = open("login.txt","a+")
@@ -193,24 +194,18 @@ cc = ""
 send_to = ""
 
 def login():
-	f = open("login.txt", "r") 
-	print f.read() 
-	flogin = open("login.txt","r")
-	f.close()
-
-	name1 = flogin.readline()
-	print("name: "+name1)
-	global cc
+	flogin = open("login.txt", "r") 
 	global send_from
 	global send_to
-	cc = flogin.readline()
-	
+	global cc
 	send_from = flogin.readline()
-	print send_from
 	send_to = flogin.readline()
+	cc = flogin.readline()
 	flogin.close()
 
 def Send():
+	global send_from, send_to, cc
+
 	msg = MIMEMultipart()
 	msg['From'] = send_from
 	msg['To'] = send_to
