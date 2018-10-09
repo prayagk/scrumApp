@@ -1,4 +1,4 @@
-import Tkinter as tk
+import tkinter as tk
 import os
 
 class SignUpUI(tk.Tk):
@@ -31,6 +31,11 @@ class SignUpUI(tk.Tk):
             fp.write(self.password.get())
             fp.close()
         self.quit()
+        app = MainUI()
+        app.title("ScumApp")
+        app.geometry("300x250")
+        app.mainloop()
+        
 
 
 class MainUI(tk.Tk):
@@ -46,27 +51,23 @@ class MainUI(tk.Tk):
 
         tk.Label(self,text="STATUS").pack()
         self.status = tk.StringVar()
-        self.status.set("one") # default value
+        self.status.set("ONGOING") # default value
 
         self.option = tk.OptionMenu(self, self.status, "ONGOING", "COMPLETED", "SCHEDULED")
         self.option.pack()
 
+        tk.Label(self,text="REMARK").pack()
+        self.remark = tk.Entry(self)
+        self.remark.pack()
 
-        statusBut.set("ONGOING") #initial value
-        option = OptionMenu(top, statusBut, "ONGOING", "COMPLETED", "SCHEDULED")
-        option.config(width=10)
-        option.grid(row = i+1, column=3,ipadx=50,ipady=5,padx=10)
-        global status
-        status = statusBut.get()
+        self.button = tk.Button(self, text="Send", command=self.saveData)
+        self.button.pack()
 
-
-        # labelRemark=Label(top,text="REMARK")
-        # labelRemark.grid(row = 0,column=4,ipadx=5,ipady=5)
-        # butRemark = Text(top,width=40,height=3)
-        # butRemark.grid(row = i+1, column=4,ipadx=5,ipady=5,padx=10)
-        # global remark
-        # remark = butRemark.get(END)
-        return
+    def readData(self):
+        self.scrum.get()
+        self.project.get()
+        self.status.get()
+        self.remark.get()
 
 def controlsUI(i):
 	butSend = Button(top,text="SEND",command=Send,width=20)
@@ -76,8 +77,6 @@ def controlsUI(i):
 	butAdd.grid(row = i+2, column = 5, ipadx = 2, ipady = 2)
 	return
 
-def removeControls():
-	pass
 
 def addTask():
 	global taskCount
