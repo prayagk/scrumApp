@@ -45,18 +45,20 @@ class MainUI(tk.Tk):
         self.project.pack()
 
         tk.Label(self,text="STATUS").pack()
-        self.status = tk.Entry(self)
-        self.status.pack()
+        self.status = tk.StringVar()
+        self.status.set("one") # default value
 
-        # labelStatus = Label(top, text = "STATUS")
-        # labelStatus.grid(row = 0,column = 3,ipadx=5,ipady=5)
-        # statusBut = StringVar()
-        # statusBut.set("ONGOING") #initial value
-        # option = OptionMenu(top, statusBut, "ONGOING", "COMPLETED", "SCHEDULED")
-        # option.config(width=10)
-        # option.grid(row = i+1, column=3,ipadx=50,ipady=5,padx=10)
-        # global status
-        # status = statusBut.get()
+        self.option = tk.OptionMenu(self, self.status, "ONGOING", "COMPLETED", "SCHEDULED")
+        self.option.pack()
+
+
+        statusBut.set("ONGOING") #initial value
+        option = OptionMenu(top, statusBut, "ONGOING", "COMPLETED", "SCHEDULED")
+        option.config(width=10)
+        option.grid(row = i+1, column=3,ipadx=50,ipady=5,padx=10)
+        global status
+        status = statusBut.get()
+
 
         # labelRemark=Label(top,text="REMARK")
         # labelRemark.grid(row = 0,column=4,ipadx=5,ipady=5)
