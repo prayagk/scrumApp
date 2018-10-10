@@ -1,6 +1,14 @@
 import Tkinter as tk
 import os
+import smtplib
 import datetime
+import email
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email.Utils import formatdate
+from email import encoders
+
 
 
 class Scrum:
@@ -8,9 +16,76 @@ class Scrum:
         self.scrum = ""
         self.project = ""
         self.status = ""
-        self.remark = ""        
+        self.remark = ""
+        self.statusCol = ""
+        self.bg = ""
 
-class SignUpUI(tk.Tk):
+    def time(self):
+        now = datetime.datetime.now()
+        self.y = str(now.year)
+        self.m = str(now.month)
+        self.d = str(now.day)
+        self.h = int(now.hour)
+        if (self.h<10):
+            plan = True
+            self.scrumCol = "SCRUM PLAN"
+        else:
+            plan = False
+            self.scrumCol = "SCRUM REPORT"
+
+class User:
+    def __init__(self):
+        with open("login.txt", "r") as fp:
+            self.name = fp.readline()
+            self.fromAddr = fp.readline()
+            self.to = fp.readline()
+            self.cc = fp.readline()
+            self.pswd = fp.readline()
+            fp.close()    
+
+class Mail(Scrum, User):
+    def __init__(self):
+        #self.user = User()
+        # self.user.name = "PRAYAG_K"
+        # self.user.fromAddr = "minions@cybrosys.in" 
+        #send_to = "minions@cybrosys.in"
+        self.time = self.time()
+        sub = "SCRUM PLAN & REPORT_"+self.time.d+'/'+self.time.m+'/'+self.time.y+'_'+self.name
+        self.subject = str(sub)
+        server="smtp.gmail.com"
+        # statusfn(status)
+
+        self.body="""
+        <table cellspacing="0" border="0">
+        <colgroup width="72"></colgroup
+        <colgroup width="235"></colgroup>
+        <colgroup width="186"></colgroup>
+        <colgroup width="106"></colgroup>
+        <colgroup width="260"></colgroup>
+        <tbody>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" height="17" align="left" bgcolor="#FF9900"><b>Sl. No.</b></td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>"""+self.scrumCol+"""</b></td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>Project</b></td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>Status</b></td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" colspan="2" valign="middle" align="center" bgcolor="#FF9900"><b>Remarks</b></td>
+        </tr>
+        <tr>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" height="51" align="center">1</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center">"""+self.scrum+"""</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center">"""+self.project+"""</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center" bgcolor='"""+self.bg+"""'>"""+self.statusCol+"""</td>
+            <td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" colspan="2" rowspan="3" valign="middle" align="center">"""+self.remark+"""</td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+        </tr>
+        </tbody>
+        </table>"""
+
+
+class SignUpUI(tk.Tk, Mail):
     def __init__(self):
         tk.Tk.__init__(self)
         tk.Label(self,text="Enter your name").pack()
@@ -47,7 +122,7 @@ class SignUpUI(tk.Tk):
         
 
 
-class MainUI(tk.Tk, Scrum):
+class MainUI(tk.Tk, Scrum, User, Mail):
     def __init__(self):
         tk.Tk.__init__(self)
         tk.Label(self,text="scrumCol").pack()
@@ -72,6 +147,8 @@ class MainUI(tk.Tk, Scrum):
         self.button = tk.Button(self, text="Send", command=self.readData)
         self.button.pack()
 
+
+
     def readData(self):
         scrum1 = Scrum()
         scrum1.scrum = self.scrum.get()
@@ -79,18 +156,22 @@ class MainUI(tk.Tk, Scrum):
         scrum1.status = self.status.get()
         scrum1.remark = self.remark.get()
 
-    def time(self):
-        now = datetime.datetime.now()
-        y = str(now.year)
-        m = str(now.month)
-        d = str(now.day)
-        h = int(now.hour)
-        if (h<10):
-            plan = True
-            scrumCol = "SCRUM PLAN"
-        else:
-            plan = False
-            scrumCol = "SCRUM REPORT"                
+    def sendMail(self):
+        msg = MIMEMultipart()
+        self.user = User()
+        self.time()
+        self.mail = Mail()
+        msg['From'] = self.user.fromAddr
+        msg['To'] = self.user.to
+        msg['Cc'] = self.user.cc
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = self.mail.subject
+        msg.attach(MIMEText(self.mail.body, 'html'))
+        smtp = smtplib.SMTP("smtp.gmail.com",587)
+        smtp.starttls()
+        smtp.login(self.user.fromAddr, self.user.pswd)
+        smtp.sendmail(self.user.fromAddr, self.user.to, msg.as_string())
+        smtp.close()
 
 # def controlsUI(i):
 # 	butSend = Button(top,text="SEND",command=Send,width=20)
@@ -146,44 +227,6 @@ class ScrumApp():
         finally:
             flogin.close()
 
-class Mail:
-    def __init__(self):
 
-        name = "PRAYAG_K"
-	#send_from = "minions@cybrosys.in" 
-	#send_to = "minions@cybrosys.in"
-	sub = "SCRUM PLAN & REPORT_"+d+'/'+m+'/'+y+'_'+name
-	subject = str(sub)
-	server="smtp.gmail.com"
-	statusfn(status)
-
-	body="""
-	<table cellspacing="0" border="0">
-	<colgroup width="72"></colgroup
-	<colgroup width="235"></colgroup>
-	<colgroup width="186"></colgroup>
-	<colgroup width="106"></colgroup>
-	<colgroup width="260"></colgroup>
-	<tbody>
-	  <tr>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" height="17" align="left" bgcolor="#FF9900"><b>Sl. No.</b></td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>"""+scrumCol+"""</b></td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>Project</b></td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" align="left" bgcolor="#FF9900"><b>Status</b></td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" colspan="2" valign="middle" align="center" bgcolor="#FF9900"><b>Remarks</b></td>
-	  </tr>
-	  <tr>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" height="51" align="center">1</td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center">"""+scrum+"""</td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center">"""+project+"""</td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" rowspan="3" valign="middle" align="center" bgcolor='"""+bg+"""'>"""+statusCol+"""</td>
-		<td style="border-width: 1px; border-style: solid; border-color: rgb(0, 0, 0);" colspan="2" rowspan="3" valign="middle" align="center">"""+remark+"""</td>
-	  </tr>
-	  <tr>
-	  </tr>
-	  <tr>
-	  </tr>
-	</tbody>
-	</table>"""
 
 ScrumApp()
